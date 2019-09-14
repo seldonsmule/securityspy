@@ -4,7 +4,7 @@ import (
        "fmt"
        "os"
        "strconv"
-       "securityspy"
+       "github.com/seldonsmule/securityspy"
        "github.com/seldonsmule/logmsg"
 )
 
