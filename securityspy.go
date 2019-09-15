@@ -112,7 +112,10 @@ func New(configfile string) *SecuritySpy{
 
   ss := new(SecuritySpy)
 
-  ss.ReadConfig(configfile)
+  if(!ss.ReadConfig(configfile)){
+    logmsg.Print(logmsg.Error, "Error reading config")
+    return nil
+  }
 
   return ss
 
@@ -139,7 +142,10 @@ func NewEncrypt(configfile string, keystring string) *SecuritySpy{
 
   }
 
-  ss.ReadConfig(configfile)
+  if(!ss.ReadConfig(configfile)){
+    logmsg.Print(logmsg.Error, "Error reading config")
+    return nil
+  }
 
   return ss
 
@@ -230,7 +236,7 @@ func (pSS *SecuritySpy) SaveConfig() {
 
 }
 
-func (pSS *SecuritySpy) ReadConfig(configfile string) {
+func (pSS *SecuritySpy) ReadConfig(configfile string) bool{
 
 
   file, err := os.Open(configfile) // For read access.
@@ -238,8 +244,7 @@ func (pSS *SecuritySpy) ReadConfig(configfile string) {
   if err != nil {
      logmsg.Print(logmsg.Error,"Unable to config config: ", err," ",  configfile)
      fmt.Println("Unable to read config: ", err)
-     return
-     panic(err)
+     return false
   }
 
   defer file.Close()
@@ -250,18 +255,17 @@ func (pSS *SecuritySpy) ReadConfig(configfile string) {
 
   if err != nil {
      logmsg.Print(logmsg.Error,"Unable to read config: ", err, count)
-     fmt.Println("Unable to read config: ", err)
-     return
+     return false
   }
 
   err = json.NewDecoder(bytes.NewReader(data)).Decode(&pSS.Config)
 
   if err != nil {
      logmsg.Print(logmsg.Error,"Unable to decode config: ", err)
-     fmt.Println("Unable to decode config: ", err)
-     return
+     return false
   }
 
+  return true
 }
 
 func Version() string{
